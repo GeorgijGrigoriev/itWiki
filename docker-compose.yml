@@ -1,0 +1,25 @@
+version: "3.7"
+services:
+  app:
+    build: ./
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./:/app
+    environment: 
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secret
+      MYSQL_DB: itwiki
+  mysql:
+    image: mysql:latest
+    volumes: 
+      - itwiki-mysql-data:/var/lib/mysql
+    restart: always
+    ports: 
+      - 3306:3306
+    environment: 
+      MYSQL_DATABASE: itwiki
+      MYSQL_ROOT_PASSWORD: secret
+volumes:
+  itwiki-mysql-data:
