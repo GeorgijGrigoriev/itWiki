@@ -1,0 +1,6 @@
+.wrapper{
+    min-height: 100vh;
+}
+.dark-background{
+    background-color: rgb(21,31,39) !important;
+}

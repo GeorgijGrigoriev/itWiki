@@ -17,8 +17,10 @@ func Run() {
 	r.PathPrefix("/assets/").Handler(assets)
 	r.HandleFunc("/", router.IndexHandler)
 	r.HandleFunc("/add/article/", router.AddArticleHandler)
+	r.HandleFunc("/read/article/{id}", router.GenerateArticlePage)
 	r.HandleFunc("/api/articles/{count}", router.APIGetArticlesHandler)
-	r.HandleFunc("/api/add/article/", router.APICreateArticle).Methods(http.MethodPost)
+	r.HandleFunc("/api/articles/add/", router.APICreateArticle).Methods("POST")
+	r.HandleFunc("/api/category/add", router.APICreateCategory).Methods("POST")
 	r.HandleFunc("/settings/initializedbtable", router.InitializeDBTable)
 
 	srv := &http.Server{
