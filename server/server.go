@@ -18,10 +18,16 @@ func Run() {
 	r.HandleFunc("/", router.IndexHandler)
 	r.HandleFunc("/add/article/", router.AddArticleHandler)
 	r.HandleFunc("/read/article/{id}", router.GenerateArticlePage)
+	r.HandleFunc("/edit/article/{id}", router.APIGetUpdateHandler).Methods("GET")
+	r.HandleFunc("/settings/", router.SettingsPageHandler)
 	r.HandleFunc("/api/articles/{count}", router.APIGetArticlesHandler)
 	r.HandleFunc("/api/articles/add/", router.APICreateArticle).Methods("POST")
-	r.HandleFunc("/api/category/add", router.APICreateCategory).Methods("POST")
+	r.HandleFunc("/api/categories/add", router.APICreateCategory).Methods("POST")
+	r.HandleFunc("/api/categories/get", router.APIGetCategories)
 	r.HandleFunc("/settings/initializedbtable", router.InitializeDBTable)
+	r.HandleFunc("/api/articles/delete/{id}", router.APIDeleteArticle).Methods("DELETE")
+	r.HandleFunc("/api/articles/update/{id}", router.APIPostUpdateHandler).Methods("POST")
+	r.HandleFunc("/read/article/mdtest/{id}", router.MDTest)
 
 	srv := &http.Server{
 		Handler:      r,

@@ -1,0 +1,99 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>itWiki</title>
+    <link rel="stylesheet" href="/assets/css/uikit.min.css">
+    <link rel="stylesheet" href="/assets/css/uikit-rtl.min.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/uikit.min.js"></script>
+    <script src="/assets/js/fontawesome.js"></script>
+    <script src="/assets/js/main.js"></script>
+</head>
+<body>
+    <div class="wrapper uk-background-muted">
+        <div class="navbar-wrapper dark-background">
+            <div class="uk-container">
+                <nav class="uk-navbar-container dark-background uk-light uk-margin" uk-navbar>
+                    <div class="uk-navbar-left">
+                        <a href="/" class="uk-navbar-item uk-logo">itWiki</a>
+                        <ul class="uk-navbar-nav">
+                            <li>
+                                <a href="/add/article/">Add article</a>
+                            </li>
+                            <li>
+                                <a href="/settings/">Settings</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="uk-navbar-right">
+                        <div class="uk-navbar-item ">
+                            <div><a href="#">LOG IN</a></div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="uk-container fix-top-margin">
+            <div class="uk-text-center" uk-grid>
+                <div class="uk-width-1-5@m">
+                    <div>
+                        <ul class="uk-subnav uk-button uk-subnav-pill fix-width" uk-switcher="connect: .settings-container">
+                            <li><a href="#main">Main</a></li>
+                            <li><a href="#categories">Categories</a></li>
+                            <li><a href="#db">DB</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="uk-divider-vertical">
+                <div class="uk-width-expand@m">
+                    <ul class="uk-switcher settings-container uk-margin">
+                        <li>
+                            <div uk-grid>
+                                <div class="uk-width-auto@m">
+                                    <div class="uk-card uk-card-default uk-card-body uk-width-1-2@m rounded">
+                                        <h3 class="uk-card-title">10</h3>
+                                        <p>Articles</p>
+                                    </div>
+                                </div>
+                                <div class="uk-width-auto@m">
+                                    <div class="uk-card uk-card-default uk-card-body uk-width-1-2@m rounded">
+                                        <h3 class="uk-card-title">10</h3>
+                                        <p>Articles</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div uk-grid>
+                                <div class="uk-width-expand@m">
+                                    <input type="text" name="category_name" id="itwiki_add_new_category_input" class="uk-input" placeholder="New category">
+                                </div>
+                                <div class="uk-width-auto@m">
+                                    <input type="submit" class="uk-button uk-button-primary" id="itwiki_add_new_category" value="Add">
+                                </div>
+                            </div>
+                            <table class="uk-table uk-table-hover uk-table-divider">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Category</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itwiki_category_table">
+                                </tbody>
+                            </table>
+                        </li>
+                        <li><div uk-grid>
+                            <div class="uk-width-auto@m">
+                                <a href="/settings/initializedbtable" class="uk-button uk-button-primary">Init database</a>
+                            </div>
+                        </div></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
