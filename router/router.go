@@ -101,10 +101,13 @@ func InitializeDBTable(w http.ResponseWriter, r *http.Request) {
 	) ENGINE=InnoDB;
 	`
 	accoutsTable := `
-	CREATE TABLE accounts (
+	CREATE TABLE IF NOT EXISTS accounts (
 		id INT NOT NULL AUTO_INCREMENT,
 		username VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
 		password VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+		created_at TIMESTAMP default NULL,
+		updated_at TIMESTAMP default NULL,
+		deleted_at TIMESTAMP default NULL,
 		token TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
 		PRIMARY KEY (id)
 	) ENGINE=InnoDB;
