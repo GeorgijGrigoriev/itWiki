@@ -1,6 +1,7 @@
 package server
 
 import (
+	"itWiki/auth"
 	"itWiki/router"
 	"log"
 	"net/http"
@@ -13,21 +14,27 @@ import (
 func Run() {
 	log.Println("Starting itWiki server")
 	r := mux.NewRouter()
+	r.Use(auth.JWTAuth)
 	assets := http.StripPrefix("/assets/", http.FileServer(http.Dir("/app/assets/")))
 	r.PathPrefix("/assets/").Handler(assets)
-	r.HandleFunc("/", router.IndexHandler)
-	r.HandleFunc("/add/article/", router.AddArticleHandler)
-	r.HandleFunc("/read/article/{id}", router.GenerateArticlePage)
-	r.HandleFunc("/edit/article/{id}", router.APIGetUpdateHandler).Methods("GET")
-	r.HandleFunc("/settings/", router.SettingsPageHandler)
-	r.HandleFunc("/api/articles/{count}", router.APIGetArticlesHandler)
-	r.HandleFunc("/api/articles/add/", router.APICreateArticle).Methods("POST")
-	r.HandleFunc("/api/categories/add", router.APICreateCategory).Methods("POST")
-	r.HandleFunc("/api/categories/get", router.APIGetCategories)
+	r.HandleFunc("/auth/createaccount", router.APIMakeAccount).Methods("POST")
+	r.HandleFunc("/auth/login", router.APIMakeLogin).Methods("POST")
+	r.HandleFunc("/auth/logout", router.APIMakeLogout)
+	r.HandleFunc("/auth/refresh", router.APIMakeRefresh)
+	r.HandleFunc("/", router.LoginHandler)
+	r.HandleFunc("/app", router.IndexHandler)
+	r.HandleFunc("/app/article/add/", router.AddArticleHandler)
+	r.HandleFunc("/app/article/read/", router.ReadArticleHandler)
+	r.HandleFunc("/app/article/edit/", router.EditArticleHandler)
+	r.HandleFunc("/app/settings/", router.SettingsPageHandler)
+	r.HandleFunc("/api/articles/{count}/", router.APIGetArticlesHandler)
+	r.HandleFunc("/api/article/add/", router.APICreateArticle).Methods("POST")
+	r.HandleFunc("/api/article/get/", router.GenerateArticlePage).Methods("POST")
+	r.HandleFunc("/api/article/delete/", router.APIDeleteArticle).Methods("DELETE")
+	r.HandleFunc("/api/article/update/", router.APIPostUpdateHandler).Methods("POST")
+	r.HandleFunc("/api/categories/add/", router.APICreateCategory).Methods("POST")
+	r.HandleFunc("/api/categories/get/", router.APIGetCategories)
 	r.HandleFunc("/settings/initializedbtable", router.InitializeDBTable)
-	r.HandleFunc("/api/articles/delete/{id}", router.APIDeleteArticle).Methods("DELETE")
-	r.HandleFunc("/api/articles/update/{id}", router.APIPostUpdateHandler).Methods("POST")
-	r.HandleFunc("/read/article/mdtest/{id}", router.MDTest)
 
 	srv := &http.Server{
 		Handler:      r,

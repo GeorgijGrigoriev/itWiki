@@ -17,19 +17,21 @@
             <div class="uk-container">
                 <nav class="uk-navbar-container dark-background uk-light uk-margin" uk-navbar>
                     <div class="uk-navbar-left">
-                        <a href="/" class="uk-navbar-item uk-logo">itWiki</a>
-                        <ul class="uk-navbar-nav">
-                            <li>
-                                <a href="/add/article/">Add article</a>
-                            </li>
-                            <li>
-                                <a href="/settings/">Settings</a>
-                            </li>
-                        </ul>
+                        <a href="/app" class="uk-navbar-item uk-logo">itWiki</a>
                     </div>
                     <div class="uk-navbar-right">
                         <div class="uk-navbar-item ">
-                            <div><a href="#">LOG IN</a></div>
+                            <div class="uk-inline uk-width-1-1">
+                                <div><i class="fas fa-2x fa-user"></i>
+                                    <div uk-dropdown="mode: click">
+                                        <ul class="uk-nav uk-dropdown-nav">
+                                            <li class="uk-nav-header" id="itwiki_logged_in_person"></li>
+                                            <li><a href="/add/article/">Add article</a></li>
+                                            <li><a href="/settings/">Settings</a></li>
+                                            <li><a href="#">Logout</a></li>
+                                        </ul>
+                                    </div> 
+                            </div>
                         </div>
                     </div>
                 </nav>
