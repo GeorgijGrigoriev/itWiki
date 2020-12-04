@@ -13,9 +13,6 @@ import (
 func Driver() *gorm.DB {
 	dsn := "root:secret@tcp(mysql:3306)/itwiki?charset=utf8mb4&parseTime=True&loc=Local"
 	mysqlDB, err := sql.Open("mysql", dsn)
-	mysqlDB.SetMaxIdleConns(10)
-	mysqlDB.SetMaxOpenConns(1000)
-	mysqlDB.SetConnMaxLifetime(5 * time.Minute)
 	if err != nil {
 		log.Println(err)
 	}
@@ -26,5 +23,11 @@ func Driver() *gorm.DB {
 	if err != nil {
 		log.Println(err)
 	}
+
+	mysqlDBConfig, err := db.DB()
+	mysqlDBConfig.SetMaxIdleConns(10)
+	mysqlDBConfig.SetConnMaxLifetime(24 * time.Hour)
+	mysqlDBConfig.SetMaxOpenConns(500)
+
 	return db
 }

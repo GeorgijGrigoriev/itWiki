@@ -5,10 +5,16 @@ $(window).on('load', function(){
     addNewArticle();
     getCategoriesTable();
     addNewCategory();
+    uploadHandler();
     $('#itwiki_logout').on('click', function(){
         deleteCookie("username");
         deleteCookie("token");
         window.location.href = "/";
+    });
+    $('#itwiki_upload_file_modal').on('beforeshow.uk.modal', function(){
+        $('#js-progressbar').val(0);
+        $('#itwiki_upload_file_input').val('');
+        $('#itwiki_readyto_copy_md_link').val('').hide();
     });
 });
 
@@ -44,6 +50,8 @@ function populateFrontpageCards(){
             }
         })
     ).then(function(succes, fail){
+            $('#itwiki_total_articles').text(succes.total);
+            console.log(succes.total);
             if (succes.length !== 0){
                 $cardRow = $('#itwiki_frontpage_cards');
                 for (i=0; i < succes.total; i++){
@@ -52,28 +60,10 @@ function populateFrontpageCards(){
                     var $clearfix = $('<div />', {
                         id: succes.data[i].article_id
                     }).appendTo($cardRow),
-                    $cardBody = $('<div />', {
-                        class: "uk-card uk-card-default uk-card-hover uk-card-body",
-                        id: succes.data[i].article_id
-                    }).appendTo($clearfix),
-                    $cardHeader = $('<div />', {
-                        class: "uk-card-header"
-                    }).appendTo($cardBody),
-                    $cardTitle = $('<h3 />', {
-                        class: "uk-card-title",
-                        text: succes.data[i].title
-                    }).appendTo($cardHeader),
-                    $cardHtmlBody = $('<div />', {
-                        class: "uk-card-body"
-                    }).appendTo($cardBody),
-                    $cardPost = $('<p />', {
-                        text: $postPreview,
-                    }).appendTo($cardHtmlBody),
-                    $cardFooter = $('<div />', {
-                        class: "uk-card-footer",
-                        html: "<button class='uk-button uk-button-text article-read-more' data-id="+ succes.data[i].article_id +" onclick='readMoreHandler("+ succes.data[i].article_id +")'>Read more</button>"
-                    }).appendTo($cardBody);
-
+                    $ul = $('#itwiki_ul_container');
+                    $li = $('<li />', {
+                        html: "<button class='uk-button uk-button-text article-read-more' data-id="+ succes.data[i].article_id +" onclick='readMoreHandler("+ succes.data[i].article_id +")'>" + succes.data[i].title + " <span class='uk-label'>" + succes.data[i].category_name + "</span></button>"
+                    }).appendTo($ul);
             }
         }
         if (succes.total == -1) {
@@ -149,7 +139,6 @@ function addNewCategory(){
         $data = $input.serializeArray(),
         $data = indexArray($data),
         $data = JSON.stringify($data);
-        console.log($data);
         $.ajax({
             url: "/api/categories/add/",
             method: "POST",
@@ -174,7 +163,7 @@ function addNewArticle(){
         data = JSON.stringify(data);
         $.when(
             $.ajax({
-                url: "/api/articles/add/",
+                url: "/api/article/add/",
                 method: "POST",
                 contentType: "application/json",
                 dataType: "json",
@@ -186,6 +175,44 @@ function addNewArticle(){
         ).then(function(succes, fail){
             window.location.href = "/app";
         })
+    });
+}
+
+function uploadHandler(){
+    $('#itwiki_readyto_copy_md_link').on('focus', function(){
+        $('#itwiki_readyto_copy_md_link').select();
+        document.execCommand('copy');
+    });
+    var $form = $('#itwiki_upload_file_form'),
+    $input = $('#itwiki_upload_file_input');
+    $form.on('submit', function(e){
+        e.preventDefault();
+        if($input[0].files.length == 0){
+            showAlert("Файл не выбран");
+        } else {
+            var $fd = $input.prop('files')[0],
+            $fod = new FormData();
+            $fod.append("file", $fd);
+            $.ajax({
+                url: "/app/article/upload/",
+                method: "POST",
+                data: $fod,
+                dataType: "json",
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function(res){
+                    $('#js-progressbar').val(100);
+                    var $url = res.Message,
+                    $fn = $url.replace(/^\/.*\//, '');
+                    $url = $url.replace(/^\/app/ , '');
+                    $origin = window.location.origin
+                    $copypaste = "![" + $fn + "](" + $origin + "" + $url +" \"" + $fn +"\")";
+                    $('#itwiki_readyto_copy_md_link').val($copypaste).show();
+                    $('#itwiki_readyto_copy_md_link').focus();
+                }
+            })
+        }
     });
 }
 
@@ -201,4 +228,9 @@ function indexArray($array) {
         ia[n['name']] = n['value']
     });
     return ia;
+}
+
+function showAlert(text){
+    $('#itwiki_alert_text').val('').text(text);
+    $('#itwiki_alert').fadeIn('slow').delay(2000).fadeOut('slow');
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	a "itWiki/auth"
 	"itWiki/db"
 	u "itWiki/utils"
@@ -148,6 +149,32 @@ func EditArticleHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "edit_article.html")
 }
 
+func UploadFilesHandler(w http.ResponseWriter, r *http.Request) {
+	r.ParseMultipartForm(10 << 20)
+	f, h, err := r.FormFile("file")
+	if err != nil {
+		u.Respond(w, u.Message(false, "Error retriving file"))
+	}
+	s := fmt.Sprint(h.Size)
+
+	if err != nil {
+		u.Respond(w, u.Message(false, "File must be less of 10 mb. File size is: "+s))
+	}
+	defer f.Close()
+	tf, err := ioutil.TempFile("/app/assets/images", "file-*.png")
+	if err != nil {
+		u.Respond(w, u.Message(false, "Error creating temp file"))
+	}
+	defer tf.Close()
+	fb, err := ioutil.ReadAll(f)
+	if err != nil {
+		u.Respond(w, u.Message(false, "Error processing file"))
+	}
+	tf.Write(fb)
+	n := fmt.Sprint(tf.Name())
+	u.Respond(w, u.Message(true, n))
+}
+
 func renderTemplate(w http.ResponseWriter, tmpl string) {
 	templateDir := filepath.Join("/app/templates", tmpl)
 	t := template.Must(template.ParseFiles(templateDir))
@@ -177,7 +204,6 @@ func APICreateArticle(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewDecoder(r.Body).Decode(&data)
 		db := db.Driver()
-		log.Println(data)
 		res := db.Table("articles").Select("Category", "Title", "Post").Create(&data)
 		fmt.Fprint(w, res.RowsAffected)
 	} else {
@@ -210,7 +236,6 @@ func APICreateCategory(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewDecoder(r.Body).Decode(&data)
-		log.Println(data)
 		db := db.Driver()
 		res := db.Select("CategoryName").Create(&data)
 		fmt.Fprint(w, res.RowsAffected)
@@ -238,7 +263,6 @@ func APIDeleteArticle(w http.ResponseWriter, r *http.Request) {
 		var article ArticleNew
 		w.Header().Set("Content-Type", "application/json")
 		json.NewDecoder(r.Body).Decode(&id)
-		log.Println(id.ID)
 		db := db.Driver()
 		res := db.Table("articles").Where("article_id = ?", id.ID).Delete(&article)
 		totalRows := res.RowsAffected
@@ -265,7 +289,6 @@ func APIGetUpdateHandler(w http.ResponseWriter, r *http.Request) {
 func APIPostUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		var article Article
-		log.Println(article.ArticleID)
 		_ = json.NewDecoder(r.Body).Decode(&article)
 		db := db.Driver()
 		db.Model(&article).Where("article_id = ?", article.ArticleID).Updates(&article)

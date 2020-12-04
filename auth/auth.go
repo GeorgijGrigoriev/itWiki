@@ -17,12 +17,24 @@ type Token struct {
 	jwt.StandardClaims
 }
 
+func HasSuffix(path string, parts []string) bool {
+	for _, part := range parts {
+		if strings.HasSuffix(path, part) == true {
+			return true
+		}
+	}
+	return false
+}
+
 //JWTAuth - midleware for JWT auth
 var JWTAuth = func(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		notAuth := []string{"/auth/login", "/app/settings/", "/auth/createaccount", "/", "/app", "/app/article/add/", "/app/article/read/", "/app/article/edit/", "/assets/js/article.js", "/assets/css/uikit.min.css", "/assets/css/uikit-rtl.min.css", "/assets/css/auth.css", "/assets/css/auth.css", "/assets/js/uikit.min.js", "/assets/js/fontawesome.js", "/assets/js/auth.js", "/assets/js/jquery.min.js", "/assets/js/main.js", "/assets/css/main.css"}
+		notAuth := []string{"/auth/login", "/app/article/upload/", "/app/settings/", "/auth/createaccount", "/", "/app", "/app/article/add/", "/app/article/read/", "/app/article/edit/"}
 		requestPath := r.URL.Path
-
+		if HasSuffix(requestPath, []string{"png", "js", "css"}) == true {
+			next.ServeHTTP(w, r)
+			return
+		}
 		for _, value := range notAuth {
 			if value == requestPath {
 				next.ServeHTTP(w, r)

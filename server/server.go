@@ -35,6 +35,7 @@ func Run() {
 	r.HandleFunc("/api/categories/add/", router.APICreateCategory).Methods("POST")
 	r.HandleFunc("/api/categories/get/", router.APIGetCategories)
 	r.HandleFunc("/settings/initializedbtable", router.InitializeDBTable)
+	r.HandleFunc("/app/article/upload/", router.UploadFilesHandler)
 
 	srv := &http.Server{
 		Handler:      r,

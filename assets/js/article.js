@@ -6,6 +6,8 @@ $(window).on('load', function(){
         AJAXRouter("/api/article/get/", "POST", articleIDToJSON(localStorage.getItem("currentArticle")), "edit");
     }
     deleteArticle();
+    // $('table').addClass('uk-table uk-table-divider');
+    mutationObserverHandler();
 });
 
 var monthNames_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -29,10 +31,8 @@ function editArticle() {
 function deleteArticle(){
     var $btn = $('#itwiki_article_settings_delete_article');
     $btn.on('click', function(){
-        console.log("clicked");
         var $id = $btn.data("id"),
         $data = articleIDToJSON($id);
-        console.log($data);
         $.ajax({
             url: "/api/article/delete/",
             method: "DELETE",
@@ -170,5 +170,23 @@ function generateEditingArticle(resp) {
                 window.location.href = "/app/article/read/";
             }
         })
+    });
+}
+
+function mutationObserverHandler() {
+    var list = $('table');
+    var MO = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+    var observer = new MO(function(mutations){
+        mutations.forEach(function(mutation){
+            if (mutation.type === 'childList'){
+                console.log("mutation!");
+            }
+        });
+    });
+    observer.observe(list, {
+        attributes: true,
+        childList: true,
+        characterData: true,
+        subtree: true
     });
 }

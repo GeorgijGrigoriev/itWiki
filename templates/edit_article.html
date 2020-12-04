@@ -36,6 +36,9 @@
                         </div>
                     </div>
                 </nav>
+                <div class="uk-alert-warning alert-clearfix" id="itwiki_alert" uk-alert>
+                    <p id="itwiki_alert_text"></p>
+                </div>
             </div>
         </div>
         <div class="uk-container uk-card-default fix-top-margin">
@@ -59,8 +62,103 @@
                         <a href="/" class="uk-button uk-button-danger uk-right">Back</a>
                         <button class="uk-button uk-button-primary" type="submit" id="itwiki_update_article_button">Update</button>
                     </div>
+                    <div class="uk-margin">
+                        <a href="#itwiki_md_cheatsheet_modal_full" class="uk-button uk-button-default" uk-toggle>MD Cheatsheet</a>
+                        <a href="#itwiki_upload_file_modal" class="uk-button uk-button-default" uk-toggle>Upload image</a>
+                    </div>
                 </fieldset>
             </form>
+        </div>
+        <div id="itwiki_upload_file_modal" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                <div class="uk-margin">
+                    <form id="itwiki_upload_file_form">
+                        <input type="file" id="itwiki_upload_file_input" name="image" class="uk-button" placeholder="Choose files">
+                        <input type="submit" class="uk-button uk-button-default" value="Upload">
+                        <progress id="js-progressbar" class="uk-progress" value="0" max="100"></progress>
+                        <input type="text" id="itwiki_readyto_copy_md_link" type="hidden" class="uk-input" />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="itwiki_md_cheatsheet_modal_full" class="uk-modal-container" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body" uk-overflow-auto>
+                <button class="uk-modal-close-default" type="button" uk-close></button>    
+                <h3>MarkDown cheatsheet</h3>
+                    <h4>Заголовки:</h4>
+                    <p># = H1</p>
+                    <p>## = H2</p>
+                    <p>### = H3</p>
+                    <p>#### = H4</p>
+                    <p>##### = H5</p>
+                    <p>###### = H6</p>
+                    <hr/>
+                    <h4>Примеры:</h4>
+                    <h1>Это H1</h1>
+                    <h6>А это H6</h6>
+                    <hr/>
+                    <h4>Списки</h4>
+                    <ol>
+                       <li>1. Цифра с точкой для нумеровонного списка</li> 
+                       <li>2. Как и в обычном документе</li>
+                    </ol>
+                    <ul>
+                        <p>Для ненумерованного списка можно использовать следующие знаки:</p>
+                        <li>* для ненумерованного списка</li>
+                        <li>- тоже подойдет</li>
+                        <li>+ аналогично</li>
+                    </ul>
+                    <hr />
+                    <h4>Ссылки</h4>
+                    <p>Синтаксис ссылки довольно простой, выглядит так:</p>
+                    <p>[Название ссылки](https://www.google.com)</p>
+                    <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Более подробное описание разметки MD</a>
+                    <hr />
+                    <h4>Таблицы</h4>
+                    <p>Синтаксис таблиц на первый взгляд трудный, однако в целом понятный:</p>
+                    <p>| Tables        | Are           | Cool  |</p>
+                    <p>| ------------- |:-------------:| -----:|</p>
+                    <p>| col 3 is      | right-aligned | $1600 |</p>
+                    <p>| col 2 is      | centered      |   $12 |</p>
+                    <p>| zebra stripes | are neat      |    $1 |</p>
+                    <table role="table">
+                        <thead>
+                        <tr>
+                        <th>Tables</th>
+                        <th align="center">Are</th>
+                        <th align="right">Cool</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                        <td>col 3 is</td>
+                        <td align="center">right-aligned</td>
+                        <td align="right">$1600</td>
+                        </tr>
+                        <tr>
+                        <td>col 2 is</td>
+                        <td align="center">centered</td>
+                        <td align="right">$12</td>
+                        </tr>
+                        <tr>
+                        <td>zebra stripes</td>
+                        <td align="center">are neat</td>
+                        <td align="right">$1</td>
+                        </tr>
+                        </tbody>
+                        </table>
+                        <hr />
+                        <h4>Цитаты</h4>
+                        <p>Цитаты используются с помощью следующего символа: > </p>
+                        <blockquote>
+                            <p>А вот как это выглядит</p>
+                        </blockquote>
+                        <hr />
+                        <h4>Выделение кода, команд и т.д.</h4>
+                        <p>Выделить команды достаточно просто, необходимо обернуть команду или код в обратные ковычки ` `</p>
+                        <code>Вот так это выглядит</code>
+                        <hr />
+            </div>
         </div>
     </div>
 </body>
