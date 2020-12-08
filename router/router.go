@@ -193,6 +193,7 @@ func APIGetArticlesHandler(w http.ResponseWriter, r *http.Request) {
 		var articles []ArticleNew
 		raw := db.Table("articles").Select("articles.article_id, articles.creation_date, articles.category, articles.title, articles.post, articles.comment, categories.id, categories.category_name").Joins("left join categories on categories.id = articles.category").Scan(&articles)
 		totalRows := raw.RowsAffected
+		handleDB(db)
 		json.NewEncoder(w).Encode(MessageResults{Message: "OK", Data: articles, Total: totalRows})
 	}
 }
@@ -206,6 +207,7 @@ func APICreateArticle(w http.ResponseWriter, r *http.Request) {
 		db := db.Driver()
 		res := db.Table("articles").Select("Category", "Title", "Post").Create(&data)
 		fmt.Fprint(w, res.RowsAffected)
+		handleDB(db)
 	} else {
 		fmt.Fprint(w, http.StatusMethodNotAllowed)
 	}
@@ -227,6 +229,7 @@ func GenerateArticlePage(w http.ResponseWriter, r *http.Request) {
 	md := []byte(tmp)
 	html := blackfriday.MarkdownCommon(md)
 	page.Content = template.HTML(html)
+	handleDB(db)
 	json.NewEncoder(w).Encode(MessageResult{Message: "OK", Data: page, Total: totalRows})
 }
 
@@ -239,6 +242,7 @@ func APICreateCategory(w http.ResponseWriter, r *http.Request) {
 		db := db.Driver()
 		res := db.Select("CategoryName").Create(&data)
 		fmt.Fprint(w, res.RowsAffected)
+		handleDB(db)
 	} else {
 		fmt.Fprint(w, http.StatusMethodNotAllowed)
 	}
@@ -250,6 +254,7 @@ func APIGetCategories(w http.ResponseWriter, r *http.Request) {
 	db := db.Driver()
 	res := db.Table("categories").Find(&categories)
 	totalRows := res.RowsAffected
+	handleDB(db)
 	json.NewEncoder(w).Encode(MessageResultsCategories{Message: "OK", Data: categories, Total: totalRows})
 }
 
@@ -266,6 +271,7 @@ func APIDeleteArticle(w http.ResponseWriter, r *http.Request) {
 		db := db.Driver()
 		res := db.Table("articles").Where("article_id = ?", id.ID).Delete(&article)
 		totalRows := res.RowsAffected
+		handleDB(db)
 		fmt.Fprint(w, totalRows)
 	}
 }
@@ -279,6 +285,7 @@ func APIGetUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		db.Table("articles").Where("article_id = ?", vars["id"]).Scan(&article)
 		t := template.Must(template.ParseFiles("/app/templates/edit_article.html"))
 		err := t.Execute(w, article)
+		handleDB(db)
 		if err != nil {
 			log.Println(err)
 		}
@@ -292,6 +299,7 @@ func APIPostUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewDecoder(r.Body).Decode(&article)
 		db := db.Driver()
 		db.Model(&article).Where("article_id = ?", article.ArticleID).Updates(&article)
+		handleDB(db)
 		fmt.Fprint(w, article.ArticleID)
 	}
 }
@@ -414,4 +422,12 @@ func APIMakeRefresh(w http.ResponseWriter, r *http.Request) {
 //LoginHandler - login page handler
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "auth.html")
+}
+
+func handleDB(db *gorm.DB) {
+	mySQL, err := db.DB()
+	if err != nil {
+		log.Println(err)
+	}
+	mySQL.Close()
 }
